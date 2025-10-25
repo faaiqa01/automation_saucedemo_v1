@@ -36,3 +36,6 @@ Thumbs.db
 chromedriver.exe
 chromedriver-win64/
 chromedriver-win64.zip
+
+# Examples folder (keep for reference)
+!examples/

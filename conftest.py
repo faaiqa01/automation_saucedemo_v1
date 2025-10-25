@@ -24,6 +24,18 @@ def driver(request):
     """Fixture to set up and tear down WebDriver."""
     chrome_options = webdriver.ChromeOptions()
     chrome_options.add_argument("--start-maximized")
+    
+    # Disable password manager popup & credential autofill
+    prefs = {
+        "credentials_enable_service": False,
+        "profile.password_manager_enabled": False
+    }
+    chrome_options.add_experimental_option("prefs", prefs)
+    
+    # Disable "Chrome is being controlled by automated test software" banner
+    chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    chrome_options.add_experimental_option("useAutomationExtension", False)
+    
     driver = webdriver.Chrome(options=chrome_options)
     
     yield driver
