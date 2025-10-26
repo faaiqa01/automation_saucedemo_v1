@@ -1,137 +1,69 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import Select
+from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from config import TIMEOUT
+from utils.wait_helpers import CustomWaitHelpers
 
 class BasePage:
-    """Base class for all page objects."""
-    
-    def __init__(self, driver):
-        """
-        Initialize base page.
-        
-        Args:
-            driver: Selenium WebDriver instance
-        """
+    def __init__(self, driver, default_timeout: int = TIMEOUT):
         self.driver = driver
-        self.wait = WebDriverWait(driver, 10)
-    
+        self.default_timeout = default_timeout
+        self.wait = WebDriverWait(driver, default_timeout)
+        self.wait_helpers = CustomWaitHelpers(driver, default_timeout)
+
+    # --- Element finders ---
     def find_element(self, by, value):
-        """
-        Find element with explicit wait.
-        
-        Args:
-            by: Selenium By locator type
-            value: Locator value
-            
-        Returns:
-            WebElement
-        """
         return self.wait.until(EC.presence_of_element_located((by, value)))
-    
+
     def find_elements(self, by, value):
-        """
-        Find multiple elements.
-        
-        Args:
-            by: Selenium By locator type
-            value: Locator value
-            
-        Returns:
-            List of WebElements
-        """
+        try:
+            self.wait.until(EC.presence_of_all_elements_located((by, value)))
+        except TimeoutException:
+            return []
         return self.driver.find_elements(by, value)
-    
+
+    # --- Interactions ---
     def click(self, by, value):
-        """
-        Click element with explicit wait.
-        
-        Args:
-            by: Selenium By locator type
-            value: Locator value
-        """
         element = self.wait.until(EC.element_to_be_clickable((by, value)))
         element.click()
-    
-    def input_text(self, by, value, text):
-        """
-        Input text into element.
-        
-        Args:
-            by: Selenium By locator type
-            value: Locator value
-            text: Text to input
-        """
-        element = self.find_element(by, value)
-        element.clear()
+
+    def input_text(self, by, value, text: str, clear: bool = True):
+        element = self.wait.until(EC.visibility_of_element_located((by, value)))
+        if clear:
+            element.clear()
         element.send_keys(text)
-    
-    def get_text(self, by, value):
-        """
-        Get text from element.
-        
-        Args:
-            by: Selenium By locator type
-            value: Locator value
-            
-        Returns:
-            Element text
-        """
-        element = self.find_element(by, value)
+
+    def select_by_value(self, by, value, option_value: str):
+        element = self.wait.until(EC.visibility_of_element_located((by, value)))
+        Select(element).select_by_value(option_value)
+
+    # --- Getters ---
+    def get_text(self, by, value) -> str:
+        element = self.wait.until(EC.visibility_of_element_located((by, value)))
         return element.text
-    
-    def is_displayed(self, by, value):
-        """
-        Check if element is displayed.
-        
-        Args:
-            by: Selenium By locator type
-            value: Locator value
-            
-        Returns:
-            Boolean
-        """
+
+    # --- Checks ---
+    def is_displayed(self, by, value) -> bool:
         try:
-            element = self.find_element(by, value)
-            return element.is_displayed()
-        except:
+            self.wait.until(EC.visibility_of_element_located((by, value)))
+            return True
+        except TimeoutException:
             return False
-    
-    def wait_for_url(self, url, timeout=10):
-        """
-        Wait for URL to match.
-        
-        Args:
-            url: Expected URL
-            timeout: Maximum wait time in seconds
-        """
-        wait = WebDriverWait(self.driver, timeout)
-        wait.until(EC.url_to_be(url))
-    
-    def wait_for_url_contains(self, partial_url, timeout=10):
-        """
-        Wait for URL to contain partial string.
-        
-        Args:
-            partial_url: Partial URL string
-            timeout: Maximum wait time in seconds
-        """
-        wait = WebDriverWait(self.driver, timeout)
-        wait.until(EC.url_contains(partial_url))
-    
-    def get_current_url(self):
-        """
-        Get current page URL.
-        
-        Returns:
-            Current URL string
-        """
-        return self.driver.current_url
-    
-    def navigate_to(self, url):
-        """
-        Navigate to URL.
-        
-        Args:
-            url: URL to navigate to
-        """
-        self.driver.get(url)
+        except NoSuchElementException:
+            return False
+
+    def is_element_displayed(self, parent_element, by, value) -> bool:
+        try:
+            child = parent_element.find_element(by, value)
+            return child.is_displayed()
+        except Exception:
+            return False
+
+    # --- Navigation / Waits ---
+    def wait_for_url_contains(self, partial_url: str, timeout: int | None = None) -> bool:
+        try:
+            WebDriverWait(self.driver, timeout or self.default_timeout).until(EC.url_contains(partial_url))
+            return True
+        except TimeoutException:
+            return False

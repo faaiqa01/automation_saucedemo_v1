@@ -1,12 +1,11 @@
 import pytest
 from page_objects.saucedemo_login_page import SaucedemoLoginPage
 from page_objects.saucedemo_inventory_page import SaucedemoInventoryPage
-
-BASE_URL = "https://www.saucedemo.com/v1/"
+from config import BASE_URL, USERNAME, PASSWORD
 
 # Valid credentials
-VALID_USERNAME = "standard_user"
-VALID_PASSWORD = "secret_sauce"
+VALID_USERNAME = USERNAME
+VALID_PASSWORD = PASSWORD
 
 @pytest.mark.saucedemo
 @pytest.mark.positive
@@ -27,7 +26,7 @@ def test_login_with_valid_credentials(driver):
     assert inventory_page.is_inventory_page_loaded(), "Inventory page should be displayed after login"
     assert inventory_page.get_page_title() == "Products", "Page title should be 'Products'"
     
-    print("✓ Login berhasil dengan kredensial valid")
+    print("[OK] Login berhasil dengan kredensial valid")
 
 @pytest.mark.saucedemo
 @pytest.mark.negative
@@ -47,7 +46,7 @@ def test_login_with_invalid_username(driver):
     error_msg = login_page.get_error_message()
     assert "Epic sadface: Username and password do not match any user in this service" in error_msg
     
-    print(f"✓ Error message ditampilkan: {error_msg}")
+    print(f"[OK] Error message ditampilkan: {error_msg}")
 
 @pytest.mark.saucedemo
 @pytest.mark.negative
@@ -67,7 +66,7 @@ def test_login_with_invalid_password(driver):
     error_msg = login_page.get_error_message()
     assert "Epic sadface: Username and password do not match any user in this service" in error_msg
     
-    print(f"✓ Error message ditampilkan: {error_msg}")
+    print(f"[OK] Error message ditampilkan: {error_msg}")
 
 @pytest.mark.saucedemo
 @pytest.mark.negative
@@ -87,7 +86,7 @@ def test_login_with_empty_username(driver):
     error_msg = login_page.get_error_message()
     assert "Epic sadface: Username is required" in error_msg
     
-    print(f"✓ Error message ditampilkan: {error_msg}")
+    print(f"[OK] Error message ditampilkan: {error_msg}")
 
 @pytest.mark.saucedemo
 @pytest.mark.negative
@@ -107,7 +106,7 @@ def test_login_with_empty_password(driver):
     error_msg = login_page.get_error_message()
     assert "Epic sadface: Password is required" in error_msg
     
-    print(f"✓ Error message ditampilkan: {error_msg}")
+    print(f"[OK] Error message ditampilkan: {error_msg}")
 
 @pytest.mark.saucedemo
 @pytest.mark.negative
@@ -127,7 +126,7 @@ def test_login_with_empty_credentials(driver):
     error_msg = login_page.get_error_message()
     assert "Epic sadface: Username is required" in error_msg
     
-    print(f"✓ Error message ditampilkan: {error_msg}")
+    print(f"[OK] Error message ditampilkan: {error_msg}")
 
 @pytest.mark.saucedemo
 @pytest.mark.negative
@@ -147,7 +146,7 @@ def test_login_with_locked_user(driver):
     error_msg = login_page.get_error_message()
     assert "Epic sadface: Sorry, this user has been locked out" in error_msg
     
-    print(f"✓ Error message ditampilkan: {error_msg}")
+    print(f"[OK] Error message ditampilkan: {error_msg}")
 
 @pytest.mark.saucedemo
 @pytest.mark.positive
@@ -167,7 +166,7 @@ def test_login_with_problem_user(driver):
     inventory_page.wait_for_url_contains("/inventory.html")
     assert inventory_page.is_inventory_page_loaded(), "Inventory page should be displayed"
     
-    print("✓ Problem user berhasil login (dengan masalah UI)")
+    print("[OK] Problem user berhasil login (dengan masalah UI)")
 
 @pytest.mark.saucedemo
 @pytest.mark.positive
@@ -187,7 +186,7 @@ def test_login_with_performance_glitch_user(driver):
     inventory_page.wait_for_url_contains("/inventory.html")
     assert inventory_page.is_inventory_page_loaded(), "Inventory page should be displayed"
     
-    print("✓ Performance glitch user berhasil login")
+    print("[OK] Performance glitch user berhasil login")
 
 @pytest.mark.saucedemo
 @pytest.mark.positive
@@ -213,4 +212,6 @@ def test_logout_after_login(driver):
     # Verify logout - should redirect to login page
     login_page.wait_for_url_contains("saucedemo.com")
     
-    print("✓ Logout berhasil")
+    print("[OK] Logout berhasil")
+
+

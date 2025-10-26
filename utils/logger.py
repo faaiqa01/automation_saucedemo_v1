@@ -141,19 +141,19 @@ class StepLogger:
     
     def info(self, message):
         """Log info message."""
-        self.logger.info(f"  → {message}")
-    
+        self.logger.info(f"  [INFO] {message}")
+
     def success(self, message):
         """Log success message."""
-        self.logger.info(f"  ✓ {message}")
-    
+        self.logger.info(f"  [PASS] {message}")
+
     def failure(self, message):
         """Log failure message."""
-        self.logger.error(f"  ✗ {message}")
-    
+        self.logger.error(f"  [FAIL] {message}")
+
     def warning(self, message):
         """Log warning message."""
-        self.logger.warning(f"  ⚠ {message}")
+        self.logger.warning(f"  [WARN] {message}")
 
 
 # Example usage in conftest.py fixture

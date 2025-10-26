@@ -3,7 +3,7 @@ import os
 
 # Environment Configuration
 # Set environment via: set ENV=dev (Windows) or export ENV=dev (Linux/Mac)
-ENVIRONMENT = os.getenv('ENV', 'dev')  # default: dev
+ENVIRONMENT = os.getenv('ENV', 'saucedemo')  # default: dev
 
 ENVIRONMENTS = {
     "dev": {
@@ -20,6 +20,11 @@ ENVIRONMENTS = {
         "url": "https://your-app-url.com",
         "username": "prod-user@example.com",
         "password": "prod-password"
+    },
+    "saucedemo": {
+        "url": "https://www.saucedemo.com/v1/",
+        "username": "standard_user", # Default for saucedemo tests
+        "password": "secret_sauce"   # Default for saucedemo tests
     }
 }
 

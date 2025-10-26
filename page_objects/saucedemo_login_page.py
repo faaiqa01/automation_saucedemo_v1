@@ -24,7 +24,7 @@ class SaucedemoLoginPage(BasePage):
     
     def navigate_to_login(self):
         """Navigate to the login page."""
-        self.navigate_to(self.base_url)
+        self.driver.get(self.base_url)
     
     def enter_username(self, username):
         """
@@ -88,3 +88,7 @@ class SaucedemoLoginPage(BasePage):
         """Clear password field."""
         element = self.find_element(*self.PASSWORD_FIELD)
         element.clear()
+
+    def is_login_button_displayed(self):
+        """Check if login button is visible (used after logout)."""
+        return self.is_displayed(*self.LOGIN_BUTTON)

@@ -23,6 +23,7 @@ logger = CustomLogger.get_logger("TestExecution")
 def driver(request):
     """Fixture to set up and tear down WebDriver."""
     chrome_options = webdriver.ChromeOptions()
+    chrome_options.add_argument("--disable-features=PasswordManagerOnboarding,PasswordLeakDetection")
     chrome_options.add_argument("--start-maximized")
     
     # Disable password manager popup & credential autofill
@@ -158,7 +159,7 @@ def pytest_runtest_makereport(item, call):
             # Take screenshot
             try:
                 driver.save_screenshot(str(screenshot_path))
-                logger.info(f"📸 Screenshot saved: {screenshot_path}")
+                logger.info(f"[Screenshot] Saved: {screenshot_path}")
                 
                 # Add screenshot to HTML report
                 if hasattr(rep, 'extra'):
@@ -166,4 +167,7 @@ def pytest_runtest_makereport(item, call):
                     extra.append(pytest_html.extras.image(str(screenshot_path)))
                     rep.extra = extra
             except Exception as e:
-                logger.error(f"❌ Failed to take screenshot: {e}")
+                logger.error(f"[Error] Failed to take screenshot: {e}")
+
+
+
